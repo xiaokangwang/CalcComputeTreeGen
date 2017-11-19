@@ -17,14 +17,14 @@ import (
 	"bytes"
 	"fmt"
 	"log"
-	"math/big"
 	"unicode/utf8"
+	"strconv"
 )
 
 %}
 
 %union {
-	num *big.Rat
+	num int
 }
 
 %type	<num>	cal
@@ -40,40 +40,53 @@ import (
 top:
 	cal
 	{
-		if $1.IsInt() {
-			fmt.Println($1.Num().String())
-		} else {
-			fmt.Println($1.String())
-		}
+				fmt.Printf("disp L-, L%v\n",$1)
 	}
 
 cal:
        '(' cal ')'
         {
-           $$ = $2
+					 seq++
+           $$ = seq
+					 fmt.Printf("mov L%v, L%v\n", $$,$2)
         }
      | cal '+' cal
         {
-           $$ = $1.Add($1, $3)
+				seq++
+				 $$ = seq
+					 fmt.Printf("add L%v, L%v, L%v\n", $$,$1,$3)
         }
 
      | cal '-' cal
         {
-          $$ = $1.Sub($1, $3)
+				seq++
+				$$ = seq
+				fmt.Printf("sub L%v, L%v, L%v\n", $$,$1,$3)
         }
      | cal '*' cal
        {
-          $$ = $1.Mul($1, $3)
+			 seq++
+				$$ = seq
+			 fmt.Printf("mul L%v, L%v, L%v\n", $$,$1,$3)
        }
      | cal '/' cal
        {
-          $$ = $1.Quo($1, $3)
+			 seq++
+				$$ = seq
+			 fmt.Printf("div L%v, L%v, L%v\n", $$,$1,$3)
        }
      | '-' cal %prec '*'
        {
-          $$ = $2.Neg($2)
+			 seq++
+				$$ = seq
+			 fmt.Printf("neg L%v, L%v\n", $$,$2)
        }
      | NUM
+		 	 {
+			 	seq++
+				$$ = seq
+			 fmt.Printf("load L%v, I%v\n", $$,$1)
+			 }
 
 %%
 
@@ -87,6 +100,8 @@ type calLex struct {
 	line []byte
 	peek rune
 }
+
+var seq = 0
 
 // The parser calls this method to get each new token. This
 // implementation returns operators and NUM.
@@ -136,9 +151,10 @@ func (x *calLex) num(c rune, yylval *calSymType) int {
 	if c != eof {
 		x.peek = c
 	}
-	yylval.num = &big.Rat{}
-	_, ok := yylval.num.SetString(b.String())
-	if !ok {
+	yylval.num = 0
+	var err error
+	yylval.num, err = strconv.Atoi(b.String())
+	if err != nil {
 		log.Printf("bad number %q", b.String())
 		return eof
 	}
