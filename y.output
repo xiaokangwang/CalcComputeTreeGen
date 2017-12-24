@@ -1,0 +1,231 @@
+
+state 0
+	$accept: .top $end 
+
+	'-'  shift 4
+	'('  shift 3
+	NUM  shift 5
+	.  error
+
+	cal  goto 2
+	top  goto 1
+
+state 1
+	$accept:  top.$end 
+
+	$end  accept
+	.  error
+
+
+state 2
+	top:  cal.    (1)
+	cal:  cal.'+' cal 
+	cal:  cal.'-' cal 
+	cal:  cal.'*' cal 
+	cal:  cal.'/' cal 
+
+	'+'  shift 6
+	'-'  shift 7
+	'*'  shift 8
+	'/'  shift 9
+	.  reduce 1 (src line 40)
+
+
+state 3
+	cal:  '('.cal ')' '(' cal ')' 
+	cal:  '('.cal ')' 
+
+	'-'  shift 4
+	'('  shift 3
+	NUM  shift 5
+	.  error
+
+	cal  goto 10
+
+state 4
+	cal:  '-'.cal 
+
+	'-'  shift 4
+	'('  shift 3
+	NUM  shift 5
+	.  error
+
+	cal  goto 11
+
+state 5
+	cal:  NUM.    (9)
+
+	.  reduce 9 (src line 90)
+
+
+state 6
+	cal:  cal '+'.cal 
+
+	'-'  shift 4
+	'('  shift 3
+	NUM  shift 5
+	.  error
+
+	cal  goto 12
+
+state 7
+	cal:  cal '-'.cal 
+
+	'-'  shift 4
+	'('  shift 3
+	NUM  shift 5
+	.  error
+
+	cal  goto 13
+
+state 8
+	cal:  cal '*'.cal 
+
+	'-'  shift 4
+	'('  shift 3
+	NUM  shift 5
+	.  error
+
+	cal  goto 14
+
+state 9
+	cal:  cal '/'.cal 
+
+	'-'  shift 4
+	'('  shift 3
+	NUM  shift 5
+	.  error
+
+	cal  goto 15
+
+state 10
+	cal:  '(' cal.')' '(' cal ')' 
+	cal:  '(' cal.')' 
+	cal:  cal.'+' cal 
+	cal:  cal.'-' cal 
+	cal:  cal.'*' cal 
+	cal:  cal.'/' cal 
+
+	'+'  shift 6
+	'-'  shift 7
+	'*'  shift 8
+	'/'  shift 9
+	')'  shift 16
+	.  error
+
+
+state 11
+	cal:  cal.'+' cal 
+	cal:  cal.'-' cal 
+	cal:  cal.'*' cal 
+	cal:  cal.'/' cal 
+	cal:  '-' cal.    (8)
+
+	'*'  shift 8
+	'/'  shift 9
+	.  reduce 8 (src line 84)
+
+
+state 12
+	cal:  cal.'+' cal 
+	cal:  cal '+' cal.    (4)
+	cal:  cal.'-' cal 
+	cal:  cal.'*' cal 
+	cal:  cal.'/' cal 
+
+	'+'  shift 6
+	'-'  shift 7
+	'*'  shift 8
+	'/'  shift 9
+	.  reduce 4 (src line 59)
+
+
+state 13
+	cal:  cal.'+' cal 
+	cal:  cal.'-' cal 
+	cal:  cal '-' cal.    (5)
+	cal:  cal.'*' cal 
+	cal:  cal.'/' cal 
+
+	'+'  shift 6
+	'-'  shift 7
+	'*'  shift 8
+	'/'  shift 9
+	.  reduce 5 (src line 66)
+
+
+state 14
+	cal:  cal.'+' cal 
+	cal:  cal.'-' cal 
+	cal:  cal.'*' cal 
+	cal:  cal '*' cal.    (6)
+	cal:  cal.'/' cal 
+
+	'*'  shift 8
+	'/'  shift 9
+	.  reduce 6 (src line 72)
+
+
+state 15
+	cal:  cal.'+' cal 
+	cal:  cal.'-' cal 
+	cal:  cal.'*' cal 
+	cal:  cal.'/' cal 
+	cal:  cal '/' cal.    (7)
+
+	'*'  shift 8
+	'/'  shift 9
+	.  reduce 7 (src line 78)
+
+
+state 16
+	cal:  '(' cal ')'.'(' cal ')' 
+	cal:  '(' cal ')'.    (3)
+
+	'('  shift 17
+	.  reduce 3 (src line 53)
+
+
+state 17
+	cal:  '(' cal ')' '('.cal ')' 
+
+	'-'  shift 4
+	'('  shift 3
+	NUM  shift 5
+	.  error
+
+	cal  goto 18
+
+state 18
+	cal:  '(' cal ')' '(' cal.')' 
+	cal:  cal.'+' cal 
+	cal:  cal.'-' cal 
+	cal:  cal.'*' cal 
+	cal:  cal.'/' cal 
+
+	'+'  shift 6
+	'-'  shift 7
+	'*'  shift 8
+	'/'  shift 9
+	')'  shift 19
+	.  error
+
+
+state 19
+	cal:  '(' cal ')' '(' cal ')'.    (2)
+
+	.  reduce 2 (src line 46)
+
+
+10 terminals, 3 nonterminals
+10 grammar rules, 20/8000 states
+0 shift/reduce, 0 reduce/reduce conflicts reported
+52 working sets used
+memory: parser 8/120000
+14 extra closures
+53 shift entries, 1 exceptions
+9 goto entries
+0 entries saved by goto default
+Optimizer space used: output 33/120000
+33 table entries, 4 zero
+maximum spread: 10, maximum offset: 17
