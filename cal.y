@@ -40,52 +40,58 @@ import (
 top:
 	cal
 	{
-				fmt.Printf("disp L-, L%v\n",$1)
+				fmt.Printf("\033[36mdisp L-, L%v\033[0m\n",$1)
 	}
 
 cal:
-       '(' cal ')'
+			 '(' cal ')' '(' cal ')'
+				{
+	 			seq++
+	 			$$ = seq
+	 			fmt.Printf("\033[91mmul L%v, L%v, L%v\033[0m\n", $$,$2,$5)
+				}
+      |'(' cal ')'
         {
 					 seq++
            $$ = seq
-					 fmt.Printf("mov L%v, L%v\n", $$,$2)
+					 fmt.Printf("\033[91mmov L%v, L%v\033[0m\n", $$,$2)
         }
      | cal '+' cal
         {
 				seq++
 				 $$ = seq
-					 fmt.Printf("add L%v, L%v, L%v\n", $$,$1,$3)
+					 fmt.Printf("\033[91madd L%v, L%v, L%v\033[0m\n", $$,$1,$3)
         }
 
      | cal '-' cal
         {
 				seq++
 				$$ = seq
-				fmt.Printf("sub L%v, L%v, L%v\n", $$,$1,$3)
+				fmt.Printf("\033[91msub L%v, L%v, L%v\033[0m\n", $$,$1,$3)
         }
      | cal '*' cal
        {
 			 seq++
 				$$ = seq
-			 fmt.Printf("mul L%v, L%v, L%v\n", $$,$1,$3)
+			 fmt.Printf("\033[91mmul L%v, L%v, L%v\033[0m\n", $$,$1,$3)
        }
      | cal '/' cal
        {
 			 seq++
 				$$ = seq
-			 fmt.Printf("div L%v, L%v, L%v\n", $$,$1,$3)
+			 fmt.Printf("\033[91mdiv L%v, L%v, L%v\033[0m\n", $$,$1,$3)
        }
      | '-' cal %prec '*'
        {
 			 seq++
 				$$ = seq
-			 fmt.Printf("neg L%v, L%v\n", $$,$2)
+			 fmt.Printf("\033[91mneg L%v, L%v\033[0m\n", $$,$2)
        }
      | NUM
 		 	 {
 			 	seq++
 				$$ = seq
-			 fmt.Printf("load L%v, I%v\n", $$,$1)
+			 fmt.Printf("\033[33mload L%v, I%v\033[0m\n", $$,$1)
 			 }
 
 %%

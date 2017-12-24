@@ -9,7 +9,9 @@ import (
 )
 
 func main() {
+	//f, _ := os.Open("calcdata")
 	in := bufio.NewReader(os.Stdin)
+	//in := bufio.NewReader(f)
 	for {
 		if _, err := os.Stdout.WriteString("> "); err != nil {
 			log.Fatalf("WriteString: %s", err)
